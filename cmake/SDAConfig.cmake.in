@@ -1,0 +1,15 @@
+# Config file for SDA, providing imported targets
+# for the package.
+#
+# After successful configuration the following variables
+# will be defined:
+#
+# SDA_VERSION the version number of SDA
+
+@PACKAGE_INIT@
+
+set_and_check(SDA_INCLUDE_DIRS "@PACKAGE_SDA_INSTALL_INCLUDE_DIR@")
+
+if(NOT TARGET SDA::sda AND NOT SDA_BINARY_DIR)
+  include("@PACKAGE_SDA_INSTALL_CMAKE_DIR@/SDATargets.cmake")
+endif()
