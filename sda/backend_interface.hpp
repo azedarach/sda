@@ -1,6 +1,8 @@
 #ifndef SDA_BACKEND_INTERFACE_HPP_INCLUDED
 #define SDA_BACKEND_INTERFACE_HPP_INCLUDED
 
+#include <cstddef>
+
 namespace sda {
 
 namespace backends {
@@ -53,9 +55,9 @@ struct solve_qr_impl {};
 
 } // namespace detail
 
-enum class Op_flag : {
+enum class Op_flag {
    None, Transpose, Adjoint
-}
+};
 
 /**
  * @brief Returns the number of columns in a matrix.
@@ -146,7 +148,8 @@ void gemm(Scalar1 alpha, const MatrixA& A, const MatrixB& B, Scalar2 beta,
  */
 template <class Scalar1, class MatrixA, class MatrixB, class Scalar2,
           class MatrixC>
-typename trace_gemm<Scalar1, MatrixA, MatrixB, Scalar2, MatrixC>::value_type
+typename detail::trace_gemm_impl<Scalar1, MatrixA, MatrixB,
+  Scalar2, MatrixC>::value_type
 trace_gemm(Scalar1 alpha, const MatrixA& A, const MatrixB& B, Scalar2 beta,
            MatrixC& C, Op_flag opA = Op_flag::None,
            Op_flag opB = Op_flag::None)
@@ -167,7 +170,7 @@ trace_gemm(Scalar1 alpha, const MatrixA& A, const MatrixB& B, Scalar2 beta,
  * @tparam MatrixB the type of the matrix B
  */
 template <class Scalar1, class MatrixA, class MatrixB>
-typename trace_gemm_op<Scalar1, MatrixA, MatrixB>::value_type
+typename detail::trace_gemm_op_impl<Scalar1, MatrixA, MatrixB>::value_type
 trace_gemm_op(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
               Op_flag opA = Op_flag::None,
               Op_flag opB = Op_flag::None)
@@ -190,7 +193,8 @@ trace_gemm_op(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
  */
 template <class Scalar1, class MatrixA, class MatrixB, class Scalar2,
           class MatrixC>
-typename sum_gemm<Scalar1, MatrixA, MatrixB, Scalar2, MatrixC>::value_type
+typename detail::sum_gemm_impl<Scalar1, MatrixA, MatrixB,
+  Scalar2, MatrixC>::value_type
 sum_gemm(Scalar1 alpha, const MatrixA& A, const MatrixB& B, Scalar2 beta,
          MatrixC& C, Op_flag opA = Op_flag::None,
          Op_flag opB = Op_flag::None)
@@ -210,7 +214,7 @@ sum_gemm(Scalar1 alpha, const MatrixA& A, const MatrixB& B, Scalar2 beta,
  * @tparam MatrixB the type of the matrix B
  */
 template <class Scalar1, class MatrixA, class MatrixB>
-typename sum_gemm_op<Scalar1, MatrixA, MatrixB>::value_type
+typename detail::sum_gemm_op_impl<Scalar1, MatrixA, MatrixB>::value_type
 sum_gemm_op(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
             Op_flag opA = Op_flag::None,
             Op_flag opB = Op_flag::None)
@@ -249,7 +253,8 @@ void matrix_residual(
  * @tparam MatrixB type of the right factor in the matrix product
  */
 template <class MatrixC, class MatrixA, class MatrixB>
-typename detail::matrix_residual_norm_impl<MatrixC, MatrixA, MatrixB>::value_type
+typename detail::matrix_residual_fro_norm_impl<MatrixC,
+   MatrixA, MatrixB>::value_type
 matrix_residual_fro_norm(
    const MatrixC& C, const MatrixA& A, const MatrixB& B)
 {
@@ -263,7 +268,7 @@ matrix_residual_fro_norm(
  * @tparam MatrixA the type of the coefficients matrix
  * @tparam MatrixB the type of the solution matrix
  */
-template <class MatrixA, class MatriXB>
+template <class MatrixA, class MatrixB>
 typename detail::solve_qr_impl<MatrixA, MatrixB>::return_type
 solve_qr(const MatrixA& A, MatrixB& B)
 {

@@ -1,7 +1,9 @@
 #ifndef SDA_NUMERICS_HELPERS_HPP_INCLUDED
 #define SDA_NUMERICS_HELPERS_HPP_INCLUDED
 
-#include <numeric_limits>
+#include <cmath>
+#include <cstdlib>
+#include <limits>
 #include <type_traits>
 
 namespace sda {
