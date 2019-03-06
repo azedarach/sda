@@ -1,6 +1,8 @@
 #ifndef SDA_EIGEN_BACKEND_HPP_INCLUDED
 #define SDA_EIGEN_BACKEND_HPP_INCLUDED
 
+#include "sda/backend_interface.hpp"
+
 #include <Eigen/Core>
 
 #include <type_traits>
@@ -34,7 +36,7 @@ struct Eigen_backend {
       }
 
    static Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>
-   create_diagonal_matrix(Index size, Scalar diagonal = Scalar(1));
+   create_diagonal_matrix(Index size, Scalar diagonal = Scalar(1))
       {
          return diagonal * Eigen::Matrix<
             Scalar, Eigen::Dynamic, Eigen::Dynamic>::Identity(rows, cols);
@@ -51,8 +53,8 @@ struct is_eigen_matrix<
    Matrix,
    typename std::enable_if<
       std::is_base_of<Eigen::MatrixBase<Matrix>,
-                      Matrix> >::type>
-   : public std::true_type {}
+                      Matrix>::value>::type>
+   : public std::true_type {};
 
 template <class Matrix>
 struct rows_impl<
@@ -163,8 +165,8 @@ struct trace_gemm_impl<
                            is_eigen_matrix<MatrixC>::value>::type> {
 
    using value_type = typename std::common_type<
-      Scalar1, MatrixA::Scalar, MatrixA::Scalar,
-      Scalar2, MatrixC::Scalar>::type;
+      Scalar1, typename MatrixA::Scalar, typename MatrixB::Scalar,
+      Scalar2, typename MatrixC::Scalar>::type;
 
    static value_type eval(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
                           Scalar2 beta, MatrixC& C, Op_flag opA, Op_flag opB)
@@ -193,12 +195,12 @@ struct trace_gemm_impl<
 
 template <class Scalar1, class MatrixA, class MatrixB>
 struct trace_gemm_op_impl<
-   Scalar1, MatrixA, MatrixB, Scalar2,
+   Scalar1, MatrixA, MatrixB,
    typename std::enable_if<is_eigen_matrix<MatrixA>::value &&
                            is_eigen_matrix<MatrixB>::value>::type> {
 
    using value_type = typename std::common_type<
-      Scalar1, MatrixA::Scalar, MatrixA::Scalar>::type;
+      Scalar1, typename MatrixA::Scalar, typename MatrixB::Scalar>::type;
 
    static value_type eval(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
                           Op_flag opA, Op_flag opB)
@@ -234,8 +236,8 @@ struct sum_gemm_impl<
                            is_eigen_matrix<MatrixC>::value>::type> {
 
    using value_type = typename std::common_type<
-      Scalar1, MatrixA::Scalar, MatrixA::Scalar,
-      Scalar2, MatrixC::Scalar>::type;
+      Scalar1, typename MatrixA::Scalar, typename MatrixB::Scalar,
+      Scalar2, typename MatrixC::Scalar>::type;
 
    static value_type eval(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
                           Scalar2 beta, MatrixC& C, Op_flag opA, Op_flag opB)
@@ -264,12 +266,12 @@ struct sum_gemm_impl<
 
 template <class Scalar1, class MatrixA, class MatrixB>
 struct sum_gemm_op_impl<
-   Scalar1, MatrixA, MatrixB, Scalar2,
+   Scalar1, MatrixA, MatrixB,
    typename std::enable_if<is_eigen_matrix<MatrixA>::value &&
                            is_eigen_matrix<MatrixB>::value>::type> {
 
    using value_type = typename std::common_type<
-      Scalar1, MatrixA::Scalar, MatrixA::Scalar>::type;
+      Scalar1, typename MatrixA::Scalar, typename MatrixB::Scalar>::type;
 
    static value_type eval(Scalar1 alpha, const MatrixA& A, const MatrixB& B,
                           Op_flag opA, Op_flag opB)
@@ -317,9 +319,9 @@ struct matrix_residual_fro_norm_impl<
    typename std::enable_if<is_eigen_matrix<MatrixC>::value &&
                            is_eigen_matrix<MatrixA>::value &&
                            is_eigen_matrix<MatrixB>::value>::type> {
-   using value_type = typename std::common_type<MatrixC::Scalar,
-                                                MatrixA::Scalar,
-                                                MatrixB::Scalar>::type;
+   using value_type = typename std::common_type<typename MatrixC::Scalar,
+                                                typename MatrixA::Scalar,
+                                                typename MatrixB::Scalar>::type;
 
    static value_type eval(const MatrixC& C, const MatrixA& A, const MatrixB& B)
       {
@@ -338,6 +340,7 @@ struct solve_qr_impl<
    static return_type eval(const MatrixA& A, MatrixB& B)
       {
          B = A.colPivHouseholderQr().solve(B);
+         return 0;
       }
 };
 

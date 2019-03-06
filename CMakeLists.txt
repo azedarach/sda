@@ -23,7 +23,6 @@ if(NOT SDA_INSTALL_CMAKE_DIR)
 endif()
 
 find_package(Eigen3 3.1)
-find_package(CUDA)
 
 if(ENABLE_COMPILER_WARNINGS)
   include(add_cxx_flag_if_supported)
@@ -32,7 +31,7 @@ endif()
 
 add_library(sda INTERFACE)
 target_include_directories(sda INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sda>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${SDA_INSTALL_INCLUDE_DIR}>)
 
 if(ENABLE_COMPILER_WARNINGS)
@@ -46,6 +45,12 @@ install(TARGETS
   sda
   EXPORT SDATargets)
 
+if(TARGET Eigen3::Eigen)
+  target_link_libraries(sda
+    INTERFACE
+    Eigen3::Eigen)
+endif()
+
 add_library(SDA::sda ALIAS sda)
 
 export(TARGETS sda
@@ -56,7 +61,7 @@ export(PACKAGE SDA)
 
 if(ENABLE_TESTING)
   enable_testing()
-#        add_subdirectory(test EXCLUDE_FROM_ALL)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
 endif()
 
 include(SDAGenerateConfig)

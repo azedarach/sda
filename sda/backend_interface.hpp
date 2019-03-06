@@ -19,7 +19,7 @@ template <class Scalar, class Matrix, class Enable = void>
 struct add_constant_impl {};
 
 template <class Scalar1, class MatrixA, class Scalar2, class MatrixB,
-          class MatrixC>
+          class MatrixC, class Enable = void>
 struct geam_impl {};
 
 template <class Scalar1, class MatrixA, class MatrixB, class Scalar2,
