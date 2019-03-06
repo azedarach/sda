@@ -39,17 +39,17 @@ if(ENABLE_COMPILER_WARNINGS)
     ${CXX_WARNING_FLAGS})
 endif()
 
-install(DIRECTORY sda DESTINATION ${SDA_INSTALL_INCLUDE_DIR})
-
-install(TARGETS
-  sda
-  EXPORT SDATargets)
-
 if(TARGET Eigen3::Eigen)
   target_link_libraries(sda
     INTERFACE
     Eigen3::Eigen)
 endif()
+
+install(DIRECTORY sda DESTINATION ${SDA_INSTALL_INCLUDE_DIR})
+
+install(TARGETS
+  sda
+  EXPORT SDATargets)
 
 add_library(SDA::sda ALIAS sda)
 

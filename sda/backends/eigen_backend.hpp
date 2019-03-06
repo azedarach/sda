@@ -2,6 +2,7 @@
 #define SDA_EIGEN_BACKEND_HPP_INCLUDED
 
 #include "sda/backend_interface.hpp"
+#include "sda/backends/eigen_type_traits.hpp"
 
 #include <Eigen/Core>
 
@@ -44,17 +45,6 @@ struct Eigen_backend {
 };
 
 namespace detail {
-
-template <class T, class Enable = void>
-struct is_eigen_matrix : public std::false_type {};
-
-template <class Matrix>
-struct is_eigen_matrix<
-   Matrix,
-   typename std::enable_if<
-      std::is_base_of<Eigen::MatrixBase<Matrix>,
-                      Matrix>::value>::type>
-   : public std::true_type {};
 
 template <class Matrix>
 struct rows_impl<
