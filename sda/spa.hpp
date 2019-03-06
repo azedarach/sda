@@ -1,6 +1,11 @@
 #ifndef SDA_SPA_HPP_INCLUDED
 #define SDA_SPA_HPP_INCLUDED
 
+/**
+ * @file spa.hpp
+ * @brief contains definition of classes providing SPA discretizations
+ */
+
 #include "backends.hpp"
 #include "numerics_helpers.hpp"
 
@@ -294,7 +299,7 @@ void SPA::solve_states_subproblem(
       add_states_regularization_gradient(states, gg);
    }
 
-   const auto status = backends::solve_least_squares(gg, gx, states);
+   const auto status = backends::solve_qr(gg, gx, states);
 }
 
 template <class Backend>

@@ -48,6 +48,9 @@ template <class MatrixC, class MatrixA, class MatrixB,
           class Enable = void>
 struct matrix_residual_fro_norm_impl {};
 
+template <class MatrixA, class MatrixB, class Enable = void>
+struct solve_qr_impl {};
+
 } // namespace detail
 
 enum class Op_flag : {
@@ -246,12 +249,25 @@ void matrix_residual(
  * @tparam MatrixB type of the right factor in the matrix product
  */
 template <class MatrixC, class MatrixA, class MatrixB>
-typename matrix_residual_norm_impl<Matrix, MatrixA, MatrixB>::value_type
+typename detail::matrix_residual_norm_impl<MatrixC, MatrixA, MatrixB>::value_type
 matrix_residual_fro_norm(
    const MatrixC& C, const MatrixA& A, const MatrixB& B)
 {
    return detail::matrix_residual_fro_norm_impl<
       MatrixC, MatrixA, MatrixB>::eval(C, A, B);
+}
+
+/**
+ * @brief Solves a linear system using QR decomposition
+ *
+ * @tparam MatrixA the type of the coefficients matrix
+ * @tparam MatrixB the type of the solution matrix
+ */
+template <class MatrixA, class MatriXB>
+typename detail::solve_qr_impl<MatrixA, MatrixB>::return_type
+solve_qr(const MatrixA& A, MatrixB& B)
+{
+   return detail::solve_qr_impl<MatrixA, MatrixB>::eval(A, B);
 }
 
 } // namespace backends

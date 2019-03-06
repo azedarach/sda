@@ -327,6 +327,20 @@ struct matrix_residual_fro_norm_impl<
       }
 };
 
+template <class MatrixA, class MatrixB>
+struct solve_qr_impl<
+   MatrixA, MatrixB,
+   typename std::enable_if<is_eigen_matrix<MatrixA>::value &&
+                           is_eigen_matrix<MatrixB>::value>::type> {
+
+   using return_type = int;
+
+   static return_type eval(const MatrixA& A, MatrixB& B)
+      {
+         B = A.colPivHouseholderQr().solve(B);
+      }
+};
+
 } // namespace detail
 
 } // namespace backends
