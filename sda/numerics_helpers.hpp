@@ -25,6 +25,15 @@ is_zero(T a, T tol = std::numeric_limits<T>::epsilon())
    return abs(a) < tol;
 }
 
+template <typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, bool>::type
+is_equal(T a, T b, T tol = std::numeric_limits<T>::epsilon())
+{
+   using std::abs;
+
+   return abs(a - b) < tol;
+}
+
 } // namespace sda
 
 #endif
