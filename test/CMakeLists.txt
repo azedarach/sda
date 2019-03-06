@@ -1,5 +1,6 @@
 set(SDA_TEST_SOURCES
-  test_main.cpp)
+  test_main.cpp
+  test_spa.cpp)
 
 if(TARGET Eigen3::Eigen)
   set(SDA_TEST_SOURCES

@@ -9,6 +9,8 @@
 #include "backends.hpp"
 #include "numerics_helpers.hpp"
 
+#include <chrono>
+
 namespace sda {
 
 template <class Scalar>
