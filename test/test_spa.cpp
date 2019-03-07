@@ -9,7 +9,7 @@ TEST_CASE( "Test state regularization parameters correctly set",
 {
    SECTION("Require states regularization parameter is non-negative")
    {
-      SPA model;
+      EuclideanSPA model;
       CHECK_THROWS(model.set_states_regularization_param(-1));
    }
 }
