@@ -8,7 +8,9 @@
 
 #include "backends.hpp"
 #include "numerics_helpers.hpp"
+#include "spa_affiliations_solver_policy.hpp"
 
+#include <cstddef>
 #include <chrono>
 
 namespace sda {
@@ -30,7 +32,7 @@ struct SPA_fit_info {
 
 template <
    class Backend,
-   template <class> Affiliations_solver
+   template<class> class Affiliations_solver = Descent_step_solver
    >
 class EuclideanSPA {
 public:
@@ -80,38 +82,39 @@ private:
 };
 
 template <class Backend>
-void EuclideanSPA::set_states_regularization_type(States_regularization r)
+void EuclideanSPA<Backend>::set_states_regularization_type(
+   States_regularization r)
 {
    states_reg_type = r;
 }
 
 template <class Backend>
-void EuclideanSPA::set_states_regularization_param(Scalar eps)
+void EuclideanSPA<Backend>::set_states_regularization_param(Scalar eps)
 {
    states_reg_param = eps;
 }
 
 template <class Backend>
-void EuclideanSPA::set_number_of_states(std::size_t k)
+void EuclideanSPA<Backend>::set_number_of_states(std::size_t k)
 {
    n_states = k;
 }
 
 template <class Backend>
-void EuclideanSPA::set_stopping_tolerance(Scalar t)
+void EuclideanSPA<Backend>::set_stopping_tolerance(Scalar t)
 {
    stopping_tolerance = t;
 }
 
 template <class Backend>
-void EuclideanSPA::set_max_iterations(std::size_t it)
+void EuclideanSPA<Backend>::set_max_iterations(std::size_t it)
 {
    max_iterations = it;
 }
 
 template <class Backend>
 template <class Matrix>
-std::size_t EuclideanSPA::get_number_of_features(
+std::size_t EuclideanSPA<Backend>::get_number_of_features(
    const Matrix& data_matrix) const
 {
    return backends::cols(data_matrix);
@@ -119,14 +122,15 @@ std::size_t EuclideanSPA::get_number_of_features(
 
 template <class Backend>
 template <class Matrix>
-std::size_t EuclideanSPA::get_number_of_records(const Matrix& data_matrix) const
+std::size_t EuclideanSPA<Backend>::get_number_of_records(
+   const Matrix& data_matrix) const
 {
    return backends::rows(data_matrix);
 }
 
 template <class Backend>
 template <class Matrix>
-EuclideanSPA::Scalar EuclideanSPA::states_penalty_function(
+EuclideanSPA<Backend>::Scalar EuclideanSPA<Backend>::states_penalty_function(
    const Matrix& states) const
 {
    Scalar value = 0;
@@ -149,7 +153,7 @@ EuclideanSPA::Scalar EuclideanSPA::states_penalty_function(
 
 template <class Backend>
 template <class DataMatrix, class AffiliationsMatrix, class StatesMatrix>
-EuclideanSPA::Scalar EuclideanSPA::distance_function(
+EuclideanSPA<Backend>::Scalar EuclideanSPA<Backend>::distance_function(
    const DataMatrix& data_matrix, const AffiliationsMatrix& affiliations,
    const StatesMatrix& states)
    const
@@ -166,7 +170,7 @@ EuclideanSPA::Scalar EuclideanSPA::distance_function(
 
 template <class Backend>
 template <class DataMatrix, class AffiliationsMatrix, class StatesMatrix>
-EuclideanSPA::Scalar EuclideanSPA::cost_function(
+EuclideanSPA<Backend>::Scalar EuclideanSPA<Backend>::cost_function(
    const DataMatrix& data_matrix, const AffiliationsMatrix& affiliations,
    const StatesMatrix& states)
    const
@@ -176,7 +180,8 @@ EuclideanSPA::Scalar EuclideanSPA::cost_function(
 }
 
 template <class Backend>
-bool EuclideanSPA::check_convergence(Scalar old_cost, Scalar new_cost) const
+bool EuclideanSPA<Backend>::check_convergence(
+   Scalar old_cost, Scalar new_cost) const
 {
    using std::abs;
 
@@ -194,7 +199,7 @@ bool EuclideanSPA::check_convergence(Scalar old_cost, Scalar new_cost) const
 
 template <class Backend>
 template <class DataMatrix, class AffiliationsMatrix, class StatesMatrix>
-SPA_fit_info<EuclideanSPA::Scalar> EuclideanSPA::fit(
+SPA_fit_info<EuclideanSPA<Backend>::Scalar> EuclideanSPA<Backend>::fit(
    const DataMatrix& data_matrix, AffiliationsMatrix& affiliations,
    StatesMatrix& states)
 {
@@ -269,7 +274,7 @@ SPA_fit_info<EuclideanSPA::Scalar> EuclideanSPA::fit(
 
 template <class Backend>
 template <class StatesMatrix, class GradMatrix>
-void EuclideanSPA::add_states_regularization_gradient(
+void EuclideanSPA<Backend>::add_states_regularization_gradient(
    std::size_t n_features, const StatesMatrix& states, GradMatrix& grad) const
 {
    switch (states_reg_type) {
@@ -287,7 +292,7 @@ void EuclideanSPA::add_states_regularization_gradient(
 
 template <class Backend>
 template <class DataMatrix, class AffiliationsMatrix, class StatesMatrix>
-void EuclideanSPA::solve_states_subproblem(
+void EuclideanSPA<Backend>::solve_states_subproblem(
    const DataMatrix& data_matrix, const AffiliationsMatrix& affiliations,
    StatesMatrix& states)
 {
@@ -308,7 +313,7 @@ void EuclideanSPA::solve_states_subproblem(
 
 template <class Backend>
 template <class DataMatrix, class AffiliationsMatrix, class StatesMatrix>
-void EuclideanSPA::solve_affiliations_subproblem(
+void EuclideanSPA<Backend>::solve_affiliations_subproblem(
    const DataMatrix& data_matrix, AffiliationsMatrix& affiliations,
    const StatesMatrix& states)
 {
